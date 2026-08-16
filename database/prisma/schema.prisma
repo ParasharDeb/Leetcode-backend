@@ -9,10 +9,27 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 model User { 
-    id    Int     @id @default(autoincrement()) 
-    email String  @unique 
-    name  String? 
+  id            String     @id @default(uuid()) 
+  email         String     @unique 
+  name          String
+  password      String
+  Problems      UserProblem[]
 } 
+model Problem{
+  id            String     @id @default(uuid()) 
+  name          String
+  description   String
+  testcases     String //store it github somehow
+  Users         UserProblem[]    
+}
+model UserProblem{
+  userID        String
+  user          User       @relation(fields: [userID],references: [id])
+  problemID     String
+  problems      Problem   @relation(fields: [problemID],references: [id])
+  solvedAt      DateTime   @default(now())
+  @@id([userID,problemID])
+}
